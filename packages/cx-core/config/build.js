@@ -3,8 +3,8 @@ var rollup = require('rollup'),
    fs = require('fs'),
    babel = require('rollup-plugin-babel'),
    babelConfig = require('./babel.config'),
-   importAlias = require('./importAlias');
-
+   importAlias = require('./importAlias'),
+   multiEntry = require('.rollup-plugin-multi-entry');
 
 
 function getPath(basePath) {
@@ -25,33 +25,25 @@ var entries = [{
    options: {
       entry: src('app/index.js')
    },
-   output: {
-
-   }
+   output: {}
 }, {
    name: 'util.js',
    options: {
       entry: src('util/index.js')
    },
-   output: {
-
-   }
+   output: {}
 }, {
    name: 'data.js',
    options: {
       entry: src('data/index-export.js')
    },
-   output: {
-
-   }
+   output: {}
 }, {
    name: 'forms.js',
    options: {
       entry: src('ui/form/index.js'),
    },
-   output: {
-
-   }
+   output: {}
 }];
 
 entries.forEach(function(e) {
@@ -67,6 +59,7 @@ entries.forEach(function(e) {
          }
       },
       plugins: [
+         multiEntry(),
          importAlias({
             [src('./util/')]: '@/util.js',
             [src('./data/')]: '@/data.js',
