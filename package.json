@@ -7,6 +7,7 @@
     "start": "webpack-dev-server --config docs/webpack.config.js --open",
     "test": "mocha",
     "docs": "webpack-dev-server --config docs/webpack.config.js --open",
+    "build": "node packages/cx-core/config/build.js",
     "build:docs": "webpack --config docs/webpack.config.js",
     "measure:docs": "webpack-dev-server --config docs/webpack.config.js --open",
     "litmus": "webpack-dev-server --config litmus/webpack.config.js --open",
@@ -52,6 +53,7 @@
     "if-loader": "^1.0.1",
     "json-loader": "^0.5.4",
     "node-sass": "^3.4.2",
+    "rollup-plugin-babel": "^2.6.1",
     "sass-loader": "^3.1.2",
     "style-loader": "^0.13.0",
     "svg-url-loader": "^1.0.2",
@@ -73,6 +75,7 @@
     "illuminate-js": "^0.3.0",
     "marked": "^0.3.5",
     "plural": "^0.2.0",
+    "rollup": "^0.36.3",
     "whatwg-fetch": "^0.11.0"
   }
 }
