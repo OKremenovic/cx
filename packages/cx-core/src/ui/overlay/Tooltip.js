@@ -112,7 +112,7 @@ class TooltipState {
       }
       this.destroy();
       this.type = type;
-      this.test = test;
+      this.production = test;
       this.mouseTrap = config.mouseTrap;
       this.alwaysVisible = config.alwaysVisible;
       if (this.mouseTrap && !this.alwaysVisible) {

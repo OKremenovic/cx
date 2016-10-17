@@ -1,17 +1,29 @@
+//This is a node script that goes through the codebase and replaces old import style with a new one
+
+//npm i globby
+//update srcFiles
+//make sure production is false
+//after you're sure it's working
+//set production to true
+
 //Please backup (commit) files before running this tool
+
 
 var fs = require('fs'),
    path = require('path'),
    globby = require('globby');
 
 
-const files = [
-   path.resolve(__dirname, '../../../litmus/**/*.js')
+const srcFiles = [
+   //path.resolve(__dirname, '../../../litmus/**/*.js')
+   path.resolve(__dirname, '../../docs/**/*.js'),
+   "!dist"
 ];
 
 var replacements = {
    'cx/data/': 'cx/data',
    'cx/util/': 'cx/util',
+   'cx/app/error': false,
    'cx/app/': 'cx/ui',
    'cx/ui/svg/': 'cx/charts',
    'cx/ui/form/': 'cx/widgets',
@@ -25,6 +37,7 @@ var replacements = {
    'cx/ui/DocumentTitle': 'cx/widgets',
    'cx/ui/HtmlElement': 'cx/widgets',
    'cx/ui/List': 'cx/widgets',
+   'cx/ui/Repeater': 'cx/widgets',
    'cx/ui/Sandbox': 'cx/widgets',
    'cx/ui/PureContainer': 'cx/widgets',
    'cx/ui/StaticText': 'cx/widgets',
@@ -37,11 +50,11 @@ var importPattern = /import {(.*)} from ["'](cx.*)["'];?\n?/g;
 //group imports from the same file
 var group = true;
 
-//do a test run
-var test = true;
+//do a test run first
+var production = true;
 
 
-globby(files)
+globby(srcFiles)
    .then(x => {
       x.forEach(f=> {
          console.log(' ');
@@ -51,7 +64,7 @@ globby(files)
          var importPaths = {};
          var result = contents.replace(importPattern, (match, imports, path) => {
             for (var rep in replacements) {
-               if (path.indexOf(rep) == 0) {
+               if (replacements[rep] && path.indexOf(rep) == 0) {
                   console.log(path, '=>', replacements[rep]);
                   if (group) {
                      let im = importPaths[replacements[rep]];
@@ -77,7 +90,7 @@ globby(files)
             result = h + result;
          }
 
-         if (!test && result != contents)
+         if (production && result != contents)
             fs.writeFileSync(f, result);
       })
    })
