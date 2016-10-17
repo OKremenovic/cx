@@ -1,9 +1,11 @@
 module.exports = {
+   "externalHelpers": true,
    "plugins": [
-      "babel-plugin-cx",
-      "babel-plugin-transform-object-rest-spread",
-      "babel-plugin-transform-function-bind",
-      ["babel-plugin-transform-react-jsx", {"pragma": "VDOM.createElement"}]
+      "external-helpers",
+      "cx",
+      "transform-object-rest-spread",
+      "transform-function-bind",
+      ["transform-react-jsx", {"pragma": "VDOM.createElement"}]
    ]
 };
 

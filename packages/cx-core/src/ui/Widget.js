@@ -5,8 +5,8 @@ import {Debug, appDataFlag} from '../util/Debug';
 import {Timing, appLoopFlag, vdomRenderFlag} from '../util/Timing';
 import {RenderingContext} from './RenderingContext';
 
-import {VDOM as vdom} from 'cx-react';
-export const VDOM = vdom;
+import { VDOM } from 'cx-react';
+export { VDOM };
 
 var widgetId = 100;
 

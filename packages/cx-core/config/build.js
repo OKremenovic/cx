@@ -4,53 +4,86 @@ var rollup = require('rollup'),
    babel = require('rollup-plugin-babel'),
    babelConfig = require('./babel.config'),
    importAlias = require('./importAlias'),
-   multiEntry = require('.rollup-plugin-multi-entry');
+   multiEntry = require('rollup-plugin-multi-entry');
 
 
 function getPath(basePath) {
    return function (x) {
       if (!x)
          return basePath;
-      return path.join(basePath, x);
+      return path.resolve(basePath, x);
    }
 }
 
-var src = getPath(path.join(__dirname, '../src'));
-var dist = getPath(path.join(__dirname, '../dist'));
+var src = getPath(path.resolve(__dirname, '../src'));
+var dist = getPath(path.resolve(__dirname, '../dist'));
 
 const endsWith = (x, y) => x.lastIndexOf(y) === x.length - y.length;
 
+function isUI(id) {
+   var relativePath = id.substring(src().length+1).replace(/\\/g, '/');
+   switch (relativePath) {
+      case 'Component':
+      case 'ui/VDOM':
+      case 'ui/Widget':
+      case 'ui/PureContainer':
+      case 'ui/CSS':
+      case 'ui/CSSHelper':
+      case 'ui/selection/Selection':
+      case 'ui/layout/Layout':
+      case 'ui/ResizeManager':
+      case 'ui/FocusManager':
+      case 'ui/Controller':
+         //console.log(relativePath);
+         return true;
+   }
+   return false;
+}
+
 var entries = [{
-   name: 'app.js',
-   options: {
-      entry: src('app/index.js')
-   },
-   output: {}
-}, {
    name: 'util.js',
    options: {
-      entry: src('util/index.js')
+      entry: [src('util/index.js')]
    },
    output: {}
 }, {
    name: 'data.js',
    options: {
-      entry: src('data/index-export.js')
+      entry: src('data/index.js')
    },
    output: {}
 }, {
-   name: 'forms.js',
+   name: 'ui.js',
    options: {
-      entry: src('ui/form/index.js'),
+      entry: src('ui/index.js')
    },
+   output: {}
+}, {
+   name: 'widgets.js',
+   options: {
+      entry: src('widgets/index.js')
+   },
+   external: isUI,
+   output: {}
+}, {
+   name: 'charts.js',
+   options: {
+      entry: src('charts/index.js'),
+   },
+   external: isUI,
    output: {}
 }];
 
 entries.forEach(function(e) {
+   // if (e.name != 'charts.js')
+   //    return;
+
    var options = Object.assign({
       treeshake: false,
       external: function (id) {
          switch (id) {
+            case 'route-parser':
+            case 'cx-react':
             case 'intl-io':
                return true;
 
@@ -61,24 +94,31 @@ entries.forEach(function(e) {
       plugins: [
          multiEntry(),
          importAlias({
-            [src('./util/')]: '@/util.js',
-            [src('./data/')]: '@/data.js',
-            [src('./ui/')]: '@/ui.js',
-            [src('./app/')]: '@/app.js',
-            [src('./ui/form/')]: '@/forms.js',
-            [src('./ui/grid/')]: '@/grid.js',
-            [src('./ui/nav/')]: '@/nav.js',
+            external: e.external,
+            paths: {
+               [src('./util/')]: '@/util.js',
+               [src('./app/')]: '@/ui.js',
+               [src('./data/')]: '@/data.js',
+               [src('./ui/svg/')]: '@/charts.js',
+               [src('./')]: '@/ui.js',
+            }
          }),
          babel(babelConfig)
       ]
    }, e.options);
-   rollup.rollup(options).then(function (bundle) {
-      var result = bundle.generate(Object.assign({
-         format: 'es'
-      }, e.output));
+   rollup.rollup(options)
+      .then(function (bundle) {
+         var result = bundle.generate(Object.assign({
+            format: 'es'
+         }, e.output));
 
-      if (e.name) {
-         fs.writeFileSync(dist(e.name), result.code.replace(/from '@\//g, "from './"));
-      }
-   });
+         if (e.name) {
+            var code = result.code.replace(/from '@\//g, "from './");
+            fs.writeFileSync(dist(e.name), code);
+            console.log(e.name, code.length / 1000, 'kB');
+         }
+      })
+      .catch(e => {
+         console.log(e);
+      });
 });
