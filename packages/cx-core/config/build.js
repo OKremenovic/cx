@@ -79,8 +79,13 @@ entries.forEach(function(e) {
    //    return;
 
    var options = Object.assign({
-      treeshake: false,
+      //treeshake: false,
+      sourceMap:  true,
       external: function (id) {
+
+         if (id.indexOf('babel') == 0)
+            throw new Error('Babel stuff detected: ' + id);
+
          switch (id) {
             case 'route-parser':
             case 'cx-react':
@@ -96,11 +101,11 @@ entries.forEach(function(e) {
          importAlias({
             external: e.external,
             paths: {
-               [src('./util/')]: '@/util.js',
-               [src('./app/')]: '@/ui.js',
-               [src('./data/')]: '@/data.js',
-               [src('./ui/svg/')]: '@/charts.js',
-               [src('./')]: '@/ui.js',
+               [src('./util/')]: '@/util',
+               [src('./app/')]: '@/ui',
+               [src('./data/')]: '@/data',
+               [src('./ui/svg/')]: '@/charts',
+               [src('./')]: '@/ui',
             }
          }),
          babel(babelConfig)
@@ -109,11 +114,12 @@ entries.forEach(function(e) {
    rollup.rollup(options)
       .then(function (bundle) {
          var result = bundle.generate(Object.assign({
-            format: 'es'
+            format: 'cjs'
          }, e.output));
 
          if (e.name) {
-            var code = result.code.replace(/from '@\//g, "from './");
+            //var code = result.code.replace(/from '@\//g, "from './");
+            var code = result.code.replace(/require\('@\//g, "require('./");
             fs.writeFileSync(dist(e.name), code);
             console.log(e.name, code.length / 1000, 'kB');
          }

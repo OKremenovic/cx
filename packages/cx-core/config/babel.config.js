@@ -1,10 +1,11 @@
 module.exports = {
-   "externalHelpers": true,
+   "presets": [
+      ["es2015", { loose: true, modules: false}],
+      "stage-0"
+   ],
    "plugins": [
       "external-helpers",
       "cx",
-      "transform-object-rest-spread",
-      "transform-function-bind",
       ["transform-react-jsx", {"pragma": "VDOM.createElement"}]
    ]
 };
