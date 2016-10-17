@@ -8,7 +8,7 @@
     "test": "mocha",
     "docs": "webpack-dev-server --config docs/webpack.config.js --open",
     "build": "node packages/cx-core/config/build.js",
-    "migrate": "node packages/cx-core/config/migrateImports.js",
+    "migrate": "node tools/migration/migrateImports.js",
     "build:docs": "webpack --config docs/webpack.config.js",
     "measure:docs": "webpack-dev-server --config docs/webpack.config.js --open",
     "litmus": "webpack-dev-server --config litmus/webpack.config.js --open",
