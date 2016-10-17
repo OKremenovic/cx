@@ -29,11 +29,12 @@ var replacements = {
    'cx/ui/PureContainer': 'cx/widgets',
    'cx/ui/StaticText': 'cx/widgets',
    'cx/ui/Text': 'cx/widgets',
-   'cx/ui/': 'cx/ui.js',
+   'cx/ui/': 'cx/ui',
 };
 
-var importPattern = /import (.*) from ["'](.*)["']/g;
-var test = true;
+var importPattern = /import {(.*)} from ["'](cx.*)["']/g;
+var group = true;
+var test = false;
 
 
 globby(files)
@@ -43,15 +44,34 @@ globby(files)
          console.log(f);
          var contents = fs.readFileSync(f, { encoding: 'utf8' });
          //console.log(contents);
+         var importPaths = {};
          var result = contents.replace(importPattern, (match, imports, path) => {
             for (var rep in replacements) {
                if (path.indexOf(rep) == 0) {
                   console.log(path, '=>', replacements[rep]);
-                  return `import ${imports} from '${replacements[rep]}';`;
+                  if (group) {
+                     let im = importPaths[replacements[rep]];
+                     if (!im)
+                        im = importPaths[replacements[rep]] = {};
+                     imports.split(',').forEach(name=>{
+                        im[name.trim()] = true
+                     });
+                     return '';
+                  }
+                  return `import ${imports} from '${replacements[rep]}'`;
                }
             }
             console.warn('Unmatched import: ', match);
-         })
+            return match;
+         });
+
+         if (group) {
+            var h = '';
+            for (var path in importPaths) {
+               h += `import \{ ${importPaths[path].join(', ')} \} from '${path}'`;
+            }
+            result = h + result;
+         }
 
          if (!test && result != contents)
             fs.writeFileSync(f, result);
