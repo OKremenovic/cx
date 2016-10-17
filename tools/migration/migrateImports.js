@@ -51,7 +51,7 @@ var importPattern = /import {(.*)} from ["'](cx.*)["'];?\n?/g;
 var group = true;
 
 //do a test run first
-var production = true;
+var production = false;
 
 
 globby(srcFiles)
@@ -64,7 +64,9 @@ globby(srcFiles)
          var importPaths = {};
          var result = contents.replace(importPattern, (match, imports, path) => {
             for (var rep in replacements) {
-               if (replacements[rep] && path.indexOf(rep) == 0) {
+               if (!replacements[rep]) //skip
+                  return match;
+               if (path.indexOf(rep) == 0) {
                   console.log(path, '=>', replacements[rep]);
                   if (group) {
                      let im = importPaths[replacements[rep]];
