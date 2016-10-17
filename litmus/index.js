@@ -1,20 +1,18 @@
-import {Widget} from 'cx/ui/Widget';
-import {startAppLoop} from 'cx/app/startAppLoop';
-import {Timing} from 'cx/util/Timing';
-import {Debug} from 'cx/util/Debug';
-import {HtmlElement} from 'cx/ui/HtmlElement';
-import {Store} from 'cx/data/Store';
+import { Widget, startAppLoop } from 'cx/ui';
+import { Timing, Debug } from 'cx/util';
+import { HtmlElement } from 'cx/widgets';
+import { Store } from 'cx/data';
 
 import './index.scss';
 
-import {GridSection} from './sections/Grid';
-import {FormSection} from './sections/Form';
-import {WindowSection} from './sections/Window';
-import {ListSection} from './sections/List';
-import ComplexGrid from './sections/ComplexGrid';
+// import {GridSection} from './sections/Grid';
+// import {FormSection} from './sections/Form';
+// import {WindowSection} from './sections/Window';
+// import {ListSection} from './sections/List';
+// import ComplexGrid from './sections/ComplexGrid';
 import TimeSeries from './sections/features/TimeSeriesScroll';
 
-import {MixedModeForm} from './components/MixedModeForm';
+//import {MixedModeForm} from './components/MixedModeForm';
 
 var store = new Store();
 

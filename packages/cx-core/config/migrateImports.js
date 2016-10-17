@@ -32,9 +32,13 @@ var replacements = {
    'cx/ui/': 'cx/ui',
 };
 
-var importPattern = /import {(.*)} from ["'](cx.*)["']/g;
+var importPattern = /import {(.*)} from ["'](cx.*)["'];?\n?/g;
+
+//group imports from the same file
 var group = true;
-var test = false;
+
+//do a test run
+var test = true;
 
 
 globby(files)
@@ -58,7 +62,7 @@ globby(files)
                      });
                      return '';
                   }
-                  return `import ${imports} from '${replacements[rep]}'`;
+                  return `import ${imports} from '${replacements[rep]}';`;
                }
             }
             console.warn('Unmatched import: ', match);
@@ -68,7 +72,7 @@ globby(files)
          if (group) {
             var h = '';
             for (var path in importPaths) {
-               h += `import \{ ${importPaths[path].join(', ')} \} from '${path}'`;
+               h += `import \{ ${Object.keys(importPaths[path]).join(', ')} \} from '${path}';\n`;
             }
             result = h + result;
          }

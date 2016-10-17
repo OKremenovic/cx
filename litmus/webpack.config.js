@@ -67,7 +67,11 @@ switch(process.env.npm_lifecycle_event) {
          },
 
          plugins: [
-            new webpack.optimize.UglifyJsPlugin(),
+            new webpack.optimize.UglifyJsPlugin({
+               compress: false,
+               beautify: true,
+               mangle: false
+            }),
             new webpack.DefinePlugin({
                'process.env.NODE_ENV': JSON.stringify('production'),
             }),
